@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml" />
+  <Default Extension="xml.fdm_material" ContentType="application/x-ultimaker-material-profile" />
+  <Default Extension="xml.fdm_material.sig" ContentType="application/x-ultimaker-material-sig" />
+  <Default Extension="inst.cfg" ContentType="application/x-ultimaker-quality-profile" />
+  <Default Extension="def.json" ContentType="application/x-ultimaker-machine-definition" />
+  <Default Extension="json" ContentType="text/json" />
+</Types>
