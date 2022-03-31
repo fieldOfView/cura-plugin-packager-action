@@ -8,10 +8,13 @@ const archiver = require('archiver');
 // most @actions toolkit packages have async methods
 async function run() {
   try {
-    const pluginId = core.getInput('plugin_id');
-    const sourcePath = core.getInput('source_folder');
-    let packageInfoPath = core.getInput('package_info_path')
-    
+    //const pluginId = core.getInput('plugin_id');
+    //const sourcePath = core.getInput('source_folder');
+    //let packageInfoPath = core.getInput('package_info_path')
+    const pluginId = 'OctoPrintPlugin';
+    const sourcePath = '../OctoPrintPlugin';
+    let packageInfoPath = '';
+
 
     const archiveFileName = pluginId + '.curapackage';
     const staticFilePath = fs.existsSync(__dirname + "/files") ? __dirname + "/files" : __dirname + "/dist/files";
