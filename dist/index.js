@@ -29949,7 +29949,20 @@ async function run() {
   }
 }
 
-run();
+async function cleanup() {
+  packageFiles.forEach(function(fileName) {
+    fs.unlink(fileName);
+  });
+}
+
+// Main
+if (!!process.env['STATE_isPost']) {
+  run();
+}
+// Post
+else {
+  cleanup();
+}
 
 })();
 
