@@ -151,7 +151,7 @@ async function cleanup() {
 }
 
 // Main
-core.info(process.env)
+core.info(process.env['STATE_isPost']);
 if (!!process.env['STATE_isPost']) {
   core.info("Running cura plugin packager");
   run();
