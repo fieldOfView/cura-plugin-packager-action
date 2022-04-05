@@ -29812,8 +29812,6 @@ const path = __nccwpck_require__(1017);
 
 const archiver = __nccwpck_require__(3084);
 
-let packageFiles = [];
-
 // most @actions toolkit packages have async methods
 async function run() {
   try {
@@ -29870,9 +29868,27 @@ async function run() {
       return parseInt(versionString.split(".")[0]);
     }));
 
+    let packageFiles = [];
+
     majorSDKVersions.forEach(function(majorVersion) {
-      const semanticVersion = majorVersion + ".0.0";
-      const archiveFileName = pluginId + "_" + pluginInfo["version"] + "_" + semanticVersion + ".curapackage";
+      const semanticVersion = `${majorVersion}.0.0`;
+      let curaVersions = "";
+      switch(majorVersion) {
+        case 5: curaVersions = "3.5-3.6";
+        break;
+
+        case 6: curaVersions = "4.0-4.3";
+        break;
+
+        case 7: curaVersions = "4.4-4.13";
+        break;
+
+        case 8: curaVersions = "5.0-";
+        break;
+
+        default: curaVersions = "Unknown";
+      }
+      const archiveFileName = `${pluginId}_v${pluginVersion}_Cura${curaVersions}.curapackage`;
       core.info(` -- ${archiveFileName}...`);
       packageFiles.push(archiveFileName);
 
@@ -29950,15 +29966,7 @@ async function run() {
   }
 }
 
-async function cleanup() {
-  packageFiles.forEach(function(fileName) {
-    core.info(`Removing ${fileName}`);
-    fs.unlink(fileName);
-  });
-}
-
 // Main
-core.info("Running cura plugin packager");
 run();
 
 })();
