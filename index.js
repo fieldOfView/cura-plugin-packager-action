@@ -11,8 +11,8 @@ async function run() {
     const sourcePath = core.getInput("source_folder");
     let pluginId = core.getInput("plugin_id");
     let packageInfoPath = core.getInput("package_info_path")
-    core.info(packageInfoPath)
-    core.info(fs.existsSync(packageInfoPath))
+    core.info("package.info: " + packageInfoPath)
+    core.info("package.info exists" + fs.existsSync(packageInfoPath))
 
     const staticFilePath = fs.existsSync(__dirname + "/files") ? __dirname + "/files" : __dirname + "/dist/files";
 
