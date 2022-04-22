@@ -76,7 +76,7 @@ async function run() {
         case 7: curaVersions = "4.4-4.13";
         break;
 
-        case 8: curaVersions = "5.0-";
+        case 8: curaVersions = "5.0";
         break;
 
         default: curaVersions = "Unknown";
