@@ -42,6 +42,9 @@ async function run() {
 
     if (pluginId == "") {
       pluginId = packageInfo["package_id"];
+      if (pluginId == "") {
+        throw new Error("`package_id` in package.json and the `plugin_id` argument must not both be empty")
+      }
     }
 
     const pluginVersion = pluginInfo["version"]
