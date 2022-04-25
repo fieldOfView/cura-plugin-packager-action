@@ -133,7 +133,7 @@ async function run() {
       archive.directory(
         sourcePath,
         "files/plugins/" + pluginId,
-        file => file.name.startsWith(".git") ? false : file
+        file => file.name.startsWith(".git") || file.name.indexOf("/.git") > -1 ? false : file
       );
 
       archive.append(
