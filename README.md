@@ -1,116 +1,63 @@
-# Create a JavaScript Action
+# Cura Plugin Packager Action
 
-<p align="center">
-  <a href="https://github.com/actions/javascript-action/actions"><img alt="javscript-action status" src="https://github.com/actions/javascript-action/workflows/units-test/badge.svg"></a>
-</p>
+A github workflow action that creates .curapackage files from Cura plugin source repositories.
+The action parses plugin.info to detect the compatible major Cura SDK versions and creates a .curapackage file for
+each SDK version.
 
-Use this template to bootstrap the creation of a JavaScript action.:rocket:
+## Inputs
 
-This template includes tests, linting, a validation workflow, publishing, and versioning guidance.
+| Parameter               | Description                                                | Default  |
+| ----------------------- | ---------------------------------------------------------- | -------- |
+| `source_folder`         | Path to the checked out source of the Cura plugin.         | ``       |
+| `plugin_id`             | Plugin id, in Cura, can be used to override package.json   | ``       |
+| `package_info_path`     | Path to a package.json                                     | ``       |
 
-If you are new, there's also a simpler introduction.  See the [Hello World JavaScript Action](https://github.com/actions/hello-world-javascript-action)
+If no `package_info_path` is specified a template `package.json` file is used. If the referenced `package.json`
+does not include a `package_id` field, the `plugin_id` argument must be specified. If both the `package.json` file
+contains a `package_id` and the `plugin_id` argument is specified, then the `plugin_id` argument is used.
 
-## Create an action from this template
+## Outputs
 
-Click the `Use this Template` and provide the new repo details for your action
+The following output values can be accessed via `${{ steps.<step-id>.outputs.<output-name> }}`:
 
-## Code in Main
+| Name                    | Description                                            | Type          |
+| ----------------------- | ------------------------------------------------------ | ------------- |
+| `packages`              | List of created .curapackage files                     | array<string> |
 
-Install the dependencies
 
-```bash
-npm install
-```
+## Example
 
-Run the tests :heavy_check_mark:
-
-```bash
-$ npm test
-
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
-...
-```
-
-## Change action.yml
-
-The action.yml defines the inputs and output for your action.
-
-Update the action.yml with your name, description, inputs and outputs for your action.
-
-See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-github-actions)
-
-## Change the Code
-
-Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
-
-```javascript
-const core = require('@actions/core');
-...
-
-async function run() {
-  try {
-      ...
-  }
-  catch (error) {
-    core.setFailed(error.message);
-  }
-}
-
-run()
-```
-
-See the [toolkit documentation](https://github.com/actions/toolkit/blob/master/README.md#packages) for the various packages.
-
-## Package for distribution
-
-GitHub Actions will run the entry point from the action.yml. Packaging assembles the code into one file that can be checked in to Git, enabling fast and reliable execution and preventing the need to check in node_modules.
-
-Actions are run from GitHub repos.  Packaging the action will create a packaged action in the dist folder.
-
-Run prepare
-
-```bash
-npm run prepare
-```
-
-Since the packaged index.js is run from the dist folder.
-
-```bash
-git add dist
-```
-
-## Create a release branch
-
-Users shouldn't consume the action from master since that would be latest code and actions can break compatibility between major versions.
-
-Checkin to the v1 release branch
-
-```bash
-git checkout -b v1
-git commit -a -m "v1 release"
-```
-
-```bash
-git push origin v1
-```
-
-Note: We recommend using the `--license` option for ncc, which will create a license file for all of the production node modules used in your project.
-
-Your action is now published! :rocket:
-
-See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-
-## Usage
-
-You can now consume the action by referencing the v1 branch
+The workflow below, which is triggered when a new tag starting with the letter `v` is pushed, checks out the repository
+into a folder named `build` using `actions/checkout`, creates packages while referencing the `package.json` file
+included in the repository, and uses `marvinpinto/action-automatic-releases` to create a release with the .curapackage
+files attached.
 
 ```yaml
-uses: actions/javascript-action@v1
-with:
-  milliseconds: 1000
-```
+name: "Cura-plugin release"
 
-See the [actions tab](https://github.com/actions/javascript-action/actions) for runs of this action! :rocket:
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  create-curapackages:
+    name: "Tagged Release"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: "build"
+          submodules: "recursive"
+      - uses: fieldOfView/cura-plugin-packager-action@main
+        with:
+          source_folder: "build"
+          package_info_path: "build/.github/workflows/package.json"
+      - uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: |
+            *.curapackage
+```
